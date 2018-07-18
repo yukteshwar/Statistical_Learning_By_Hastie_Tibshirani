@@ -33,3 +33,40 @@ auto = na.omit(auto)
 #}
 auto.class = sapply(auto, class)
 print(auto.class)
+
+# What is the range of each quantitative predictor? You can answer this using the range() function.
+cat("range(mpg): ", range(auto$mpg))
+cat("\nrange(displacement): ", range(auto$displacement))
+cat("\nrange(horsepower): ", range(auto$horsepower))
+cat("\nrange(weight): ", range(auto$weight))
+cat("\nrange(acceleration): ", range(auto$acceleration))
+
+# What is the mean and standard deviation of each quantitative predictor?
+cat("\nmean(mpg): ", mean(auto$mpg))
+cat("\nmean(displacement): ", mean(auto$displacement))
+cat("\nmean(horsepower): ", mean(auto$horsepower))
+cat("\nmean(weight): ", mean(auto$weight))
+cat("\nmean(acceleration): ", mean(auto$acceleration))
+cat("\nstd_dev(mpg): ", sd(auto$mpg))
+cat("\nstd_dev(displacement): ", sd(auto$displacement))
+cat("\nstd_dev(horsepower): ", sd(auto$horsepower))
+cat("\nstd_dev(weight): ", sd(auto$weight))
+cat("\nstd_dev(acceleration): ", sd(auto$acceleration))
+
+# Now remove the 10th through 85th observations. What is the range, mean, and standard deviation of each 
+# predictor in the subset of the data that remains?
+autoNew = auto[c(1:9, 85:nrow(auto)),]
+cat("\nmean(mpg): ", mean(autoNew$mpg))
+cat("\nmean(displacement): ", mean(autoNew$displacement))
+cat("\nmean(horsepower): ", mean(autoNew$horsepower))
+cat("\nmean(weight): ", mean(autoNew$weight))
+cat("\nmean(acceleration): ", mean(autoNew$acceleration))
+cat("\nstd_dev(mpg): ", sd(autoNew$mpg))
+cat("\nstd_dev(displacement): ", sd(autoNew$displacement))
+cat("\nstd_dev(horsepower): ", sd(autoNew$horsepower))
+cat("\nstd_dev(weight): ", sd(autoNew$weight))
+cat("\nstd_dev(acceleration): ", sd(autoNew$acceleration))
+
+#Using the full data set, investigate the predictors graphically, using scatterplots or other tools of 
+# your choice. Create some plots highlighting the relationships among the predictors. Comment on your findings.
+plot(auto)
