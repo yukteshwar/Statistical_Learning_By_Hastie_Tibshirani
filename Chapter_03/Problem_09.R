@@ -30,9 +30,10 @@ plot(auto)
 # cor() which is qualitative.
 drops <- c("cylinders","origin", "year", "name")
 auto.quant = auto[ , !(names(auto) %in% drops)]
-auto.quant$horsepower = as.numeric(auto.quant$horsepower)
-auto.quant$weight = as.numeric(auto.quant$weight)
-print(cor(auto.quant))
+#auto.quant$horsepower = as.numeric(auto.quant$horsepower)
+#auto.quant$weight = as.numeric(auto.quant$weight)
+#na.omit(auto.quant)
+print(cor(na.omit(auto.quant)))
 
 # Use the lm() function to perform a multiple linear regression
 # with mpg as the response and all other variables except name as
@@ -40,5 +41,6 @@ print(cor(auto.quant))
 # Comment on the output.
 drops <- c("name")
 auto.fit = auto[ , !(names(auto) %in% drops)]
+auto.fit = na.omit(auto.fit)
 lm.fit = lm(mpg~., data = auto.fit)
 print(summary(lm.fit))
