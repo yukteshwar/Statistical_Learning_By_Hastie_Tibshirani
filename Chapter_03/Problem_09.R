@@ -44,3 +44,12 @@ auto.fit = auto[ , !(names(auto) %in% drops)]
 auto.fit = na.omit(auto.fit)
 lm.fit = lm(mpg~., data = auto.fit)
 print(summary(lm.fit))
+print("Based on p-values, displacement, weight, year & origin are significant")
+print("Coeff of year, along with Std. Error & p-value shows that it is significant")
+
+# Use the plot() function to produce diagnostic plots of the linear regression fit. 
+# Comment on any problems you see with the fit. Do the residual plots suggest any 
+# unusually large outliers? Does the leverage plot identify any observations with 
+# unusually high leverage?
+par ( mfrow = c (2 ,2) )
+plot(lm.fit)
