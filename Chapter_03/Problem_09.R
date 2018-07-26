@@ -53,3 +53,31 @@ print("Coeff of year, along with Std. Error & p-value shows that it is significa
 # unusually high leverage?
 par ( mfrow = c (2 ,2) )
 plot(lm.fit)
+
+# Use the * and : symbols to fit linear regression models with
+# interaction effects. Do any interactions appear to be statistically
+# significant?
+auto.quant = na.omit(auto.quant)
+# Consider all quantitative predictors
+lm.fit1 = lm(mpg~., data = auto.quant)
+# Consider two significant quatitative predictor
+lm.fit2= lm(mpg~horsepower+weight, data = auto.quant)
+# Consider their interation
+lm.fit3 = lm(mpg~horsepower*weight, data = auto.quant)
+# Consider their second order predictors
+lm.fit4= lm(mpg~horsepower*weight + I(horsepower^2) + I(weight^2), 
+            data = auto.quant)
+# Anova test
+print(anova(lm.fit2, lm.fit3))
+print(anova(lm.fit2, lm.fit4))
+print(anova(lm.fit3, lm.fit4))
+
+# Try a few different transformations of the variables, such as
+# log(X), sqrt(X), X^2 . Comment on your findings.
+
+# Consider weight as it is most significant in lm.fit1
+lm.fit5= lm(mpg~weight + I(weight^2) + sqrt(weight) + log(weight), 
+            data = auto.quant)
+# Consider horsepower as it is most significant in lm.fit1
+lm.fit6= lm(mpg~horsepower + I(horsepower^2) + sqrt(horsepower) + log(horsepower), 
+            data = auto.quant)
