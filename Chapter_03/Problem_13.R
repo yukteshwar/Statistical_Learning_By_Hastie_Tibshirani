@@ -47,5 +47,10 @@ print(lm.fit$coefficients)
 # Draw the population regression line on the plot, in a different color. 
 # Use the legend() command to create an appropriate legend.
 abline(lm.fit, lwd = 3, col = "red")
-legend(1, 95, legend = c("y = -1 + 0.5*x + eps", "lm(y~x)"), col = c("black", "red"),
+legend(-2.2, 0.1, legend = c("y = -1 + 0.5*x + eps", "lm(y~x)"), col = c("black", "red"),
        lty=1:2, cex=0.8)
+
+# Now fit a polynomial regression model that predicts y using x and x^2 . 
+# Is there evidence that the quadratic term improves the model fit? 
+# Explain your answer.
+lm.fitpoly = lm(y~x + I(x^2))
