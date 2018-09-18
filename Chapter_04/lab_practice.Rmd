@@ -226,6 +226,39 @@ mean(test.Y!=knn.pred)
 mean(test.Y!="No")
 ```
 
+The vector test is numeric, with values from 1 through 1, 000. Typing standardized.X[test,] yields the submatrix of the data containing the observations whose indices range from 1 to 1, 000, whereas typing standardized.X[-test,] yields the submatrix containing the observations whose indices do not range from 1 to 1, 000. The KNN error rate on the 1,000 test observations is just under 12 %. At first glance, this may appear to be fairly good. However, since only 6 % of customers purchased insurance, we could get the error rate down to 6 % by always predicting No regardless of the values of the predictors!
+
+Suppose that there is some non-trivial cost to trying to sell insurance to a given individual. For instance, perhaps a salesperson must visit each potential customer. If the company tries to sell insurance to a random selection of customers, then the success rate will be only 6 %, which may be far too low given the costs involved. Instead, the company would like to try to sell insurance only to customers who are likely to buy it. So the overall error rate is not of interest. Instead, the fraction of individuals that are correctly predicted to buy insurance is of interest.
+
+It turns out that KNN with K = 1 does far better than random guessing among the customers that are predicted to buy insurance. Among 77 such customers, 9, or 11.7 %, actually do purchase insurance. This is double the rate that one would obtain from random guessing.
+
+```{r}
+table(knn.pred, test.Y)
+9/(68+9)
+```
+Using K = 3, the success rate increases to 19 %, and with K = 5 the rate is 26.7 %. This is over four times the rate that results from random guessing. It appears that KNN is finding some real patterns in a difficult data set!
+```{r}
+knn.pred = knn(train.X, test.X,train.Y,k=3)
+table(knn.pred,test.Y)
+5/26
+knn.pred = knn(train.X, test.X,train.Y,k=5)
+table(knn.pred,test.Y)
+4/15
+```
+
+As a comparison, we can also fit a logistic regression model to the data. If we use 0.5 as the predicted probability cut-off for the classifier, then we have a problem: only seven of the test observations are predicted to purchase insurance. Even worse, we are wrong about all of these! However, we are not required to use a cut-off of 0.5. If we instead predict a purchase any time the predicted probability of purchase exceeds 0.25, we get much better results: we predict that 33 people will purchase insurance, and we are correct for about 33 % of these people. This is over five times better than random guessing!
+```{r}
+glm.fits = glm(Purchase~.,data=Caravan, family = binomial,subset=-test)
+glm.probs = predict(glm.fits,Caravan[test,], type="response")
+glm.pred=rep("No", 1000)
+glm.pred[glm.probs>0.5]="Yes"
+table(glm.pred,test.Y)
+glm.pred=rep("No", 1000)
+glm.pred[glm.probs>0.25]="Yes"
+table(glm.pred,test.Y)
+11/(22+11)
+```
+
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
 
