@@ -258,6 +258,10 @@ glm.pred[glm.probs>0.25]="Yes"
 table(glm.pred,test.Y)
 11/(22+11)
 ```
+Finally detach data frame
+```{r}
+detach(Smarket)
+```
 
 
 Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.

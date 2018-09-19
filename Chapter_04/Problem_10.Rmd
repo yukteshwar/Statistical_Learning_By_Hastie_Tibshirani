@@ -1,0 +1,116 @@
+---
+title: "Chapter 4: Problem 10"
+output: html_notebook
+---
+
+Clear workspace, plots & console window
+```{r}
+# Clear workspace
+rm(list = ls())
+# Clear all plots
+graphics.off()
+# Clear Console
+cat("\f")
+```
+
+Make sure that you have the directory set to the correct location for the data.
+```{r}
+# run this if it's your first time using it to install
+# install.packages("rstudioapi")
+
+# Make sure that you have the directory set to the correct location for the data.
+library(rstudioapi) # load it
+# The following line is for getting the path of your current open file
+current_path <- getActiveDocumentContext()$path 
+# The next line set the working directory to the relevant one:
+setwd(dirname(current_path ))
+# You can make sure you are in the right directory
+print( getwd() )
+```
+Chapter 4: Problem 10
+This question should be answered using the Weekly data set, which is part of the ISLR package. This data is similar in nature to the Smarket data from this chapter’s lab, except that it contains 1,089 weekly returns for 21 years, from the beginning of 1990 to the end of 2010.
+```{r}
+library(ISLR)
+#attach(Weekly)
+dim(Weekly)
+names(Weekly)
+summary(Weekly)
+```
+
+a) Produce some numerical and graphical summaries of the Weekly data. Do there appear to be any patterns?
+```{r}
+pairs(Weekly)
+cor(Weekly[,-9])
+plot(Weekly$Volume)
+```
+From correlation matrix, there is correlation between Volume and Year.
+
+________________________________________________________________________________
+b) Use the full data set to perform a logistic regression with Direction as the response and the five lag variables plus Volume as predictors. Use the summary function to print the results. Do any of the predictors appear to be statistically significant? If so, which ones?
+```{r}
+glm.fit=glm(Direction~Lag1 + Lag2 + Lag3 + Lag4 + Lag5 + Volume, data = Weekly, family = binomial)
+summary(glm.fit)
+```
+The smallest p-value here is associated with Lag2 . The coefficient is positive and it suggests that if the market had a positive return yesterday, then it is likely to go up today. However, at a value of 0.03 > 0.05, the p-value is still large, and so there is no clear evidence of a real association between Lag2 and Direction.
+______________________________________________________________________________
+c) Compute the confusion matrix and overall fraction of correct predictions. Explain what the confusion matrix is telling you about the types of mistakes made by logistic regression.
+```{r}
+glm.probs = predict(glm.fit, type = "response")
+glm.pred = rep("Down", length(glm.probs))
+glm.pred[glm.probs > 0.5] = "Up"
+table(glm.pred, Weekly$Direction)
+mean(glm.pred == Weekly$Direction)
+mean(glm.pred != Weekly$Direction)
+```
+The diagonal elements of the confusion matrix indicate correct predictions, while the off-diagonals represent incorrect predictions. Hence our model correctly predicted that the market would go up on 557 days and that it would go down on 54 days, for a total of 557 + 54 = 611 correct predictions. The mean() function can be used to compute the fraction of days for which the prediction was correct. In this case, logistic regression
+correctly predicted the movement of the market 56.1 % of the time and incorrectly predicted 43.8 %.
+____________________________________________________________________________________
+d) Now fit the logistic regression model using a training data period from 1990 to 2008, with Lag2 as the only predictor. Compute the confusion matrix and the overall fraction of correct predictions for the held out data (that is, the data from 2009 and 2010).
+```{r}
+train = (Weekly$Year <= 2008)
+test = Weekly[!train,]
+dim(test)
+test.Direction = Direction[!train]
+
+glm.fits = glm(Direction~Lag2, data=Weekly, family=binomial, subset = train)
+glm.probs=predict(glm.fits,test, type="response")
+
+glm.pred=rep("Down", length(glm.probs))
+glm.pred[glm.probs>0.5]="Up"
+table(glm.pred, test.Direction)
+mean(glm.pred==test.Direction)
+mean(glm.pred!=test.Direction)
+```
+e) Repeat (d) using LDA
+
+```{r}
+lda.fit = lda(Direction~Lag2, data=Weekly, subset = train)
+lda.fit
+lda.pred = predict(lda.fit, test)
+lda.class=lda.pred$class
+table(lda.class, test.Direction)
+mean(lda.class==test.Direction)
+```
+
+f) Repeat (d) using QDA.
+```{r}
+qda.fit = qda(Direction~Lag2, data=Weekly, subset = train)
+qda.fit
+qda.pred = predict(qda.fit, test)
+qda.class=qda.pred$class
+table(qda.class, test.Direction)
+mean(qda.class==test.Direction)
+```
+g) Repeat (d) using KNN with K = 1.
+```{r}
+library(class)
+train.X =cbind(Weekly$Lag2)[train,]
+test.X = cbind(Weekly$Lag2)[!train,]
+train.Direction=Weekly$Direction[train]
+set.seed(1)
+knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 1)
+table(knn.pred, test.Direction)
+mean(knn.pred == test.Direction)
+```
+
+h) Which of these methods appears to provide the best results on this data?
