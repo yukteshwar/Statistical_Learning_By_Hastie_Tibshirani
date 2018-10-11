@@ -46,10 +46,78 @@ summary(Auto)
 ```
 b) Explore the data graphically in order to investigate the association between mpg01 and the other features. Which of the other features seem most likely to be useful in predicting mpg01 ? Scatterplots and boxplots may be useful tools to answer this question. Describe your findings.
 ```{r}
-pairs(Auto)
+pairs(Auto, col = Auto$mpg01)
+dat2 <- data.frame(lapply(Auto[which(!names(Auto)=="name")], function(x) as.numeric(as.character(x))))
+corr.d <- cor( dat2)
+corr.d 
+corr.d[ lower.tri( corr.d, diag = TRUE ) ] <- NA
+library(corrplot)
+corrplot( corr.d, type = "upper", diag = FALSE )
 ```
-
 ```{r}
-boxplot(Auto)
+library(Matrix)
+m <- melt( corr.d )
 ```
 
+c) Split the data into a training set and a test set.
+```{r}
+# Spliting data with mpg > median
+Auto.mpg1 = Auto[which(Auto$mpg01 == 1),]
+# Spliting data with mpg < median
+Auto.mpg0 = Auto[which(Auto$mpg01 == 0),]
+# Permute data for mpg > median
+x = sample(1:nrow(Auto.mpg1))
+Auto.mpg1 = Auto.mpg1[x,]
+# Permute data for mpg < median
+x = sample(1:nrow(Auto.mpg0))
+Auto.mpg0 = Auto.mpg0[x,]
+# training data for mpg > median
+Auto.mpg1.train = Auto.mpg1[1:floor(nrow(Auto.mpg1)*2/3),]
+# test data for mpg > median
+Auto.mpg1.test = Auto.mpg1[ceiling(nrow(Auto.mpg1)*2/3):nrow(Auto.mpg1),]
+# training data for mpg < median
+Auto.mpg0.train = Auto.mpg0[1:floor(nrow(Auto.mpg0)*2/3),]
+# test data for mpg < median
+Auto.mpg0.test = Auto.mpg0[ceiling(nrow(Auto.mpg0)*2/3):nrow(Auto.mpg0),]
+# Overall training data
+Auto.train = rbind(Auto.mpg0.train, Auto.mpg1.train)
+# Overall test data
+Auto.test = rbind(Auto.mpg0.test, Auto.mpg1.test)
+# Delete temperary variables from workspace
+rm(Auto.mpg1, Auto.mpg0, Auto.mpg1.train, Auto.mpg1.test, Auto.mpg0.train, Auto.mpg0.test, x)
+```
+d) Perform LDA on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained?
+```{r}
+
+library(MASS)
+lda.fit = lda(mpg01~.-name, data=Auto.train)
+lda.fit
+plot(lda.fit)
+lda.pred = predict(lda.fit, Auto.test)
+names(lda.pred)
+lda.class=lda.pred$class
+table(lda.class, Auto.test$mpg01)
+mean(lda.class!=Auto.test$mpg01)
+```
+e) Perform QDA on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained?
+```{r}
+qda.fit = qda(mpg01~.-name, data=Auto.train)
+qda.fit
+#plot(qda.fit)
+qda.pred = predict(qda.fit, Auto.test)
+names(qda.pred)
+qda.class=qda.pred$class
+table(qda.class, Auto.test$mpg01)
+mean(qda.class!=Auto.test$mpg01)
+```
+f) Perform logistic regression on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained?
+```{r}
+glm.fits=glm(mpg01~mpg, data = Auto.train, family = binomial)
+summary(glm.fits)
+glm.probs=predict(glm.fits, Auto.test, type="response")
+glm.pred = rep(0, nrow(Auto.test))
+glm.pred[glm.probs>0.5] = 1
+table(glm.pred,  Auto.test$mpg01)
+mean(glm.pred!= Auto.test$mpg01)
+```
+g) Perform KNN on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained? Which value of K seems to perform the best on this data set?

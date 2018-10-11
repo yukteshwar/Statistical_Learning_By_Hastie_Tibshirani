@@ -2,7 +2,15 @@
 title: "Chapter 4: Lab: Logistic Regression, LDA, QDA, and KNN"
 output: html_notebook
 ---
-
+Clear workspace, plots & console window
+```{r}
+# Clear workspace
+rm(list = ls())
+# Clear all plots
+graphics.off()
+# Clear Console
+cat("\f")
+```
 1. Smarket Data. This data set consists of percentage returns for the S&P 500 stock index over 1, 250 days, from the beginning of 2001 until the end of 2005. For each date, we have recorded
 the percentage returns for each of the five previous trading days, Lag1 through Lag5 . We have also recorded Volume (the number of shares traded on the previous day, in billions), Today (the percentage return on the date in question) and Direction (whether the market was Up or Down on this date).
 
@@ -111,6 +119,7 @@ predict(glm.fits, newdata=data.frame(Lag1 = c(1.2,1.5), Lag2=c(1.1, -0.8)), type
 library(MASS)
 lda.fit = lda(Direction~Lag1+Lag2, data=Smarket, subset = train)
 lda.fit
+plot(lda.fit)
 ```
 The LDA output indicates that pi_1 = 0.492 and pi_2 = 0.508; in other words, 49.2 % of the training observations correspond to days during which the market went down. It also provides the group means; these are the average of each predictor within each class, and are used by LDA as estimates of mu_k . These suggest that there is a tendency for the previous 2 days’ returns to be negative on days when the market increases, and a tendency for the previous days’ returns to be positive on days when the market declines. The coefficients of linear discriminants output provides the linear combination of Lag1 and Lag2 that are used to form the LDA decision rule. In other words, these are the multipliers of the elements of X = x in (4.19). If −0.642 × Lag1− 0.514 × Lag2 is large, then the LDA classifier will predict a market increase, and if it is small, then the LDA classifier will predict a market decline. The plot() function produces plots of the linear discriminants, obtained by computing −0.642 × Lag1 − 0.514 × Lag2 for
 each of the training observations. 

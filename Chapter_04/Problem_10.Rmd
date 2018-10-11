@@ -117,17 +117,26 @@ mean(knn.pred == test.Direction)
 h) Which of these methods appears to provide the best results on this data?
 **Answer**: Among glm, lda and qda, first two give same result and is correctly predicting by 62.5 %. For knn with k = 4, we get comparable result as follow:
 ```{r}
+set.seed(1)
   knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 2)
   table(knn.pred, test.Direction)
   mean(knn.pred == test.Direction)
 ```
 ```{r}
+set.seed(1)
   knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 3)
   table(knn.pred, test.Direction)
   mean(knn.pred == test.Direction)
 ```
 ```{r}
+set.seed(1)
   knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 4)
+  table(knn.pred, test.Direction)
+  mean(knn.pred == test.Direction)
+```
+```{r}
+set.seed(1)
+  knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 5)
   table(knn.pred, test.Direction)
   mean(knn.pred == test.Direction)
 ```
