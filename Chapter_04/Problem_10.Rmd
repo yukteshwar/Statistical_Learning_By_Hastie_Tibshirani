@@ -41,7 +41,7 @@ a) Produce some numerical and graphical summaries of the Weekly data. Do there a
 ```{r}
 pairs(Weekly)
 cor(Weekly[,-9])
-plot(Weekly$Volume)
+plot(Weekly$Year, Weekly$Volume)
 ```
 From correlation matrix, there is correlation between Volume and Year.
 
@@ -70,7 +70,7 @@ d) Now fit the logistic regression model using a training data period from 1990 
 train = (Weekly$Year <= 2008)
 test = Weekly[!train,]
 dim(test)
-test.Direction = Direction[!train]
+test.Direction = Weekly$Direction[!train]
 
 glm.fits = glm(Direction~Lag2, data=Weekly, family=binomial, subset = train)
 glm.probs=predict(glm.fits,test, type="response")
@@ -84,6 +84,7 @@ mean(glm.pred!=test.Direction)
 e) Repeat (d) using LDA
 
 ```{r}
+library(MASS)
 lda.fit = lda(Direction~Lag2, data=Weekly, subset = train)
 lda.fit
 lda.pred = predict(lda.fit, test)
@@ -114,3 +115,19 @@ mean(knn.pred == test.Direction)
 ```
 
 h) Which of these methods appears to provide the best results on this data?
+**Answer**: Among glm, lda and qda, first two give same result and is correctly predicting by 62.5 %. For knn with k = 4, we get comparable result as follow:
+```{r}
+  knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 2)
+  table(knn.pred, test.Direction)
+  mean(knn.pred == test.Direction)
+```
+```{r}
+  knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 3)
+  table(knn.pred, test.Direction)
+  mean(knn.pred == test.Direction)
+```
+```{r}
+  knn.pred = knn(data.frame(train.X), data.frame(test.X), train.Direction, k = 4)
+  table(knn.pred, test.Direction)
+  mean(knn.pred == test.Direction)
+```

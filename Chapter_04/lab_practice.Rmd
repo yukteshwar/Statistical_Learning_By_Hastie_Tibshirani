@@ -16,7 +16,7 @@ pairs(Smarket)
 The cor() function produces a matrix that contains all of the pairwise correlations among the predictors in a data set. The first command below gives an error message because the Direction variable is qualitative.
 ```{r}
 #cor(Smarket)
-cor ( Smarket [ , -9])
+cor (Smarket [ , -9])
 ```
 As one would expect, the correlations between the lag variables and today’s returns are close to zero. In other words, there appears to be little correlation between today’s returns and previous days’ returns. The only substantial correlation is between Year and Volume . By plotting the data we see that Volume is increasing over time. In other words, the average number of shares traded daily increased from 2001 to 2005.
 
