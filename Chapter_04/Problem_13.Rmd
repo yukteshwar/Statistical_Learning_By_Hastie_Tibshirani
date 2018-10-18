@@ -1,0 +1,56 @@
+---
+title: "Chapter 4: Problem 13"
+output: html_notebook
+---
+
+Clear workspace, plots & console window
+```{r}
+# Clear workspace
+rm(list = ls())
+# Clear all plots
+graphics.off()
+# Clear Console
+cat("\f")
+```
+
+Make sure that you have the directory set to the correct location for the data.
+```{r}
+# run this if it's your first time using it to install
+# install.packages("rstudioapi")
+
+# Make sure that you have the directory set to the correct location for the data.
+library(rstudioapi) # load it
+# The following line is for getting the path of your current open file
+current_path <- getActiveDocumentContext()$path 
+# The next line set the working directory to the relevant one:
+setwd(dirname(current_path ))
+# You can make sure you are in the right directory
+print( getwd() )
+```
+Chapter 4: Problem 13
+IUsing the Boston data set, fit classification models in order to predict whether a given suburb has a crime rate above or below the median. Explore logistic regression, LDA, and KNN models using various subsets of the predictors. Describe your findings.
+```{r}
+library(MASS)
+dim(Boston)
+names(Boston)
+summary(Boston)
+```
+Computing and adding median to dataframe
+```{r}
+crim.median = median(Boston$crim)
+Boston$crim01 = ifelse(Boston$crim > crim.median, 1, 0)
+Boston$crim01 = as.factor(Boston$crim01)
+dim(Boston)
+summary(Boston)
+```
+Computing correlation
+```{r}
+pairs(Boston, col = Boston$crim01)
+dat2 <- data.frame(lapply(Boston, function(x) as.numeric(as.character(x))))
+corr.d <- cor( dat2)
+corr.d 
+corr.d[ lower.tri( corr.d, diag = TRUE ) ] <- NA
+library(corrplot)
+corrplot( corr.d, type = "upper", diag = FALSE )
+```
+

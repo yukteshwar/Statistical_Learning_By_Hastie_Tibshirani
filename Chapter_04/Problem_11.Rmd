@@ -54,11 +54,6 @@ corr.d[ lower.tri( corr.d, diag = TRUE ) ] <- NA
 library(corrplot)
 corrplot( corr.d, type = "upper", diag = FALSE )
 ```
-```{r}
-library(Matrix)
-m <- melt( corr.d )
-```
-
 c) Split the data into a training set and a test set.
 ```{r}
 # Spliting data with mpg > median
@@ -112,7 +107,7 @@ mean(qda.class!=Auto.test$mpg01)
 ```
 f) Perform logistic regression on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained?
 ```{r}
-glm.fits=glm(mpg01~mpg, data = Auto.train, family = binomial)
+glm.fits=glm(mpg01~weight, data = Auto.train, family = binomial)
 summary(glm.fits)
 glm.probs=predict(glm.fits, Auto.test, type="response")
 glm.pred = rep(0, nrow(Auto.test))
@@ -121,3 +116,14 @@ table(glm.pred,  Auto.test$mpg01)
 mean(glm.pred!= Auto.test$mpg01)
 ```
 g) Perform KNN on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in (b). What is the test error of the model obtained? Which value of K seems to perform the best on this data set?
+```{r}
+train.X = scale(Auto.train$acceleration)
+test.X = scale(Auto.test$acceleration)
+train.Y = Auto.train$mpg01
+test.Y = Auto.test$mpg01
+set.seed(1)
+knn.pred = knn(train.X, test.X, train.Y, k=3)
+mean(test.Y!=knn.pred)
+mean(test.Y!="No")
+```
+
