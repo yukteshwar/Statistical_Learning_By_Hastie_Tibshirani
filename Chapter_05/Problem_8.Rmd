@@ -1,0 +1,64 @@
+---
+title: "Chapter 5: Problem 8"
+output: html_notebook
+---
+
+Clear workspace, plots & console window
+```{r}
+# Clear workspace
+rm(list = ls())
+# Clear all plots
+graphics.off()
+# Clear Console
+cat("\f")
+```
+
+Make sure that you have the directory set to the correct location for the data.
+```{r}
+# run this if it's your first time using it to install
+# install.packages("rstudioapi")
+
+# Make sure that you have the directory set to the correct location for the data.
+library(rstudioapi) # load it
+# The following line is for getting the path of your current open file
+current_path <- getActiveDocumentContext()$path 
+# The next line set the working directory to the relevant one:
+setwd(dirname(current_path ))
+# You can make sure you are in the right directory
+print( getwd() )
+```
+We will now perform cross-validation on a simulated data set.
+a) Generate a simulated data set as follows:
+```{r}
+set.seed(1)
+x = rnorm(100)
+y = x - 2*x^2 + rnorm(100)
+```
+
+In this data set, what is n and what is p? Write out the model used to generate the data in equation form.
+
+n = 100, p = 2
+
+b) Create a scatterplot of X against Y . Comment on what you find.
+```{r}
+plot(x,y)
+```
+
+c) Set a random seed, and then compute the LOOCV errors that result from fitting the following four models using least squares:
+
+```{r}
+df = data.frame(y,x)
+error = matrix(data = 0, nrow = 100, ncol = 4)
+for (i in 1:nrow(df))
+{
+  train = (1:nrow(df))[-i]
+  lm.fit = list()#vector(mode = "list", length = 4)
+  for (j in 1:4)
+  {
+    lm.fit[[j]] = lm(y~poly(x,j), data = df, subset = train)
+    lm.pred = predict(lm.fit[[j]], df[-train,])
+    error[i,j] = (df$y[-train] - lm.pred)
+  }
+}
+```
+
